@@ -22,7 +22,7 @@ public class Weather extends ListenerAdapter {
             OptionMapping option = event.getOption("city");
             String city = option.getAsString();
 
-            String apiKey = "d1715ae6486692fb4b753af67304c4d1";
+            String apiKey = "Key"; //insert your key
             String weatherEndPoint = "http://api.openweathermap.org/data/2.5/weather";
 
             User user = event.getUser();
