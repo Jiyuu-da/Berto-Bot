@@ -45,8 +45,16 @@ public class Fish extends ListenerAdapter {
                         int difference = bet - userBalance;
                         if(bet > 0) {
                             if(bet <= userBalance) {
-                                String[] objects = {"Crab... :crab:", "Shoe... :athletic_shoe:", "Plastic Bottle... :squeeze_bottle:", "Glass Bottle... :champagne:", "Tool Box... :toolbox:", "Bag... :shopping_bags:", "Candy Wrapper... :candy:", "Ball... :baseball:", "Boot... :boot:", "Hammer... :hammer:", "Can... :canned_food:", "Wooden Bat... :cricket_game:"};
-                                String[] fish = {"Salmon!! :fishing_pole_and_fish:", "Trout!! :fishing_pole_and_fish:", "Gold Fish!! :fishing_pole_and_fish:", "Bass!! :fishing_pole_and_fish:", "Cat Fish!! :fishing_pole_and_fish:", "Puffer Fish!! :fishing_pole_and_fish:"};
+                                String[] objects = {"Ram Babu Buri... :poop:"," Crab... :crab:",
+                                                    "Shoe... :athletic_shoe:", "Plastic Bottle... :squeeze_bottle:",
+                                                     "Glass Bottle... :champagne:", "Tool Box... :toolbox:",
+                                                    "Bag... :shopping_bags:", "Candy Wrapper... :candy:",
+                                                    "Ball... :baseball:", "Boot... :boot:",
+                                                    "Hammer... :hammer:", "Can... :canned_food:",
+                                                    "Wooden Bat... :cricket_game:"};
+                                String[] fish = {"Salmon!! :fishing_pole_and_fish:", "Trout!! :fishing_pole_and_fish:",
+                                                "Gold Fish!! :fishing_pole_and_fish:", "Bass!! :fishing_pole_and_fish:",
+                                                "Cat Fish!! :fishing_pole_and_fish:", "Puffer Fish!! :fishing_pole_and_fish:"};
 
                                 User user = event.getUser();
 
@@ -55,13 +63,13 @@ public class Fish extends ListenerAdapter {
                                 String result;
 
                                 if(num <= 30) {
-                                    int fishChoice = (int)(Math.random()*7);
+                                    int fishChoice = (int)(Math.random()* fish.length);
                                     result = fish[fishChoice];
-                                    int updatedAmount = (int)(userBalance + 1.3*bet);
+                                    int updatedAmount = (int)(userBalance + 1.5*bet);
                                     DBSetup.updateBalanceInDatabase(userID, updatedAmount);
                                     event.reply( user.getAsMention() + " You caught a " + result + " and increased your bet, you now have " + updatedAmount+ " coins :coin:").setEphemeral(false).queue();
                                 } else {
-                                    int objectChoice = (int)(Math.random()*11);
+                                    int objectChoice = (int)(Math.random()*objects.length);
                                     result = objects[objectChoice];
                                     int updatedAmount = userBalance - bet;
                                     DBSetup.updateBalanceInDatabase(userID, updatedAmount);

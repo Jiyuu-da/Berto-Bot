@@ -85,6 +85,8 @@ public class slashCommandManager extends ListenerAdapter {
                 .addChoice("7", "7");
         commandData.add(Commands.slash("7up7down", "Play 7 up 7 down"). addOptions(sevenBet, sevenNum));
 
+        commandData.add(Commands.slash("poor", "look for smth on the streets"));
+
 
         event.getGuild().updateCommands().addCommands(commandData).queue();
         super.onGuildReady(event);

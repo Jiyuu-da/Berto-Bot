@@ -25,14 +25,16 @@ public class Help extends ListenerAdapter {
             embed.addField("/buy", "buy items from the shop", false);
             embed.addField("/cointoss", "toss a coin", false);
             embed.addField("/fish", "try catching a fish", false);
-            embed.addField("/8ball", "ask the magic 8 ball a question", false);
             embed.addField("/piglatin", "convert a sentence into piglatin", false);
             embed.addField("/ping", "get ponged", false);
+            embed.addField("/poor", "look for money on the streets", false);
             embed.addField("/say", "make the bot say somethiing", false);
             embed.addField("/shop", "have a tour of the shop", false);
             embed.addField("/steal", "steal coins from someone", false);
             embed.addField("/weather", "check a city's current weather", false);
             embed.addField("/work", "work as someone", false);
+            embed.addField("/7Up7Down", "play 7 Up and 7 Down", false);
+            embed.addField("/8ball", "ask the magic 8 ball a question", false);
 
             embed.setColor(constants.color);
             embed.setFooter("Requested by " + event.getUser().getEffectiveName(), event.getUser().getAvatarUrl());
