@@ -59,8 +59,8 @@ public void onSlashCommandInteraction(SlashCommandInteractionEvent event) {
                             if(bet <= userBalance) {
                                 User user = event.getUser();
 
-                                int outcome1 = (int) (Math.random() * (12-2) + 2);
-                                int outcome2 = (int) (Math.random() * (12-2) + 2);
+                                int outcome1 = (int) (Math.random() * (6) + 1);
+                                int outcome2 = (int) (Math.random() * (6) + 1);
                                 int result = outcome1 + outcome2;
 
 
@@ -98,7 +98,7 @@ public void onSlashCommandInteraction(SlashCommandInteractionEvent event) {
                                     else {
                                         int updatedAmount = userBalance - bet;
                                         DBSetup.updateBalanceInDatabase(userID, updatedAmount);
-                                        event.reply(user.getAsMention() + "You picked **7**, it was + " +result+ " You Lost... You now have " + updatedAmount+" coins :coin:").setEphemeral(false).queue();
+                                        event.reply(user.getAsMention() + "You picked **7**, it was + **"  +result+ "** You Lost... You now have " + updatedAmount+" coins :coin:").setEphemeral(false).queue();
 
                                     }
                                 }
