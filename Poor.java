@@ -53,7 +53,7 @@ public class Poor extends ListenerAdapter {
                 int responseIdxCheap = (int)(Math.random() * cheapResponses.length);
                 int responseIdxGood = (int)(Math.random() * goodResponses.length);
 
-                if(probs == 1) {
+                if(probs <= 15) {
                     if(money > 5000) {
                         int updatedAmount = (int)(userBalance + money);
                         DBSetup.updateBalanceInDatabase(userID, updatedAmount);
