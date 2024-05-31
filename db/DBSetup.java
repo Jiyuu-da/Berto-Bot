@@ -104,7 +104,7 @@ public class DBSetup {
     }
 
     public static List<Economy> getSortedBalance () throws SQLException {
-        String SQL_SORT = "SELECT user_bal, user_id FROM eco_table ORDER BY user_bal DESC LIMIT 6";
+        String SQL_SORT = "SELECT user_bal, user_id FROM eco_table ORDER BY user_bal DESC LIMIT 10";
         List<Economy> users = new ArrayList<>();
 
         try (Connection con = ds.getConnection();

@@ -48,8 +48,6 @@ public class LeaderBoard extends ListenerAdapter {
 
                 EmbedBuilder embed = new EmbedBuilder();
 
-                embed.setTitle("BertoBot Leaderboard :coin:");
-
                 StringBuilder descriptionBuilder = new StringBuilder();
 
                 int maxBalanceLength = 0;
@@ -64,18 +62,20 @@ public class LeaderBoard extends ListenerAdapter {
 
 
                 for (Economy i : users) {
+                    int pos = 1;
                     String balance = String.valueOf((int) i.getUser_bal());
                     String id = String.valueOf(i.getUser_id());
 
                     balance = String.format("%" + maxBalanceLength + "s", balance);
 
 
-                    descriptionBuilder.append("**`").append(balance).append("`** :coin:").append("<@!").append(id).append(">").append("\n");
+                    descriptionBuilder.append(pos + ". ").append("**`").append(balance).append("`** :coin:").append("<@!").append(id).append(">").append("\n");
+                    pos +=1;
                 }
 
-
+                embed.setTitle("Top 10 Leaderboard :coin:");
                 embed.setDescription(String.valueOf(descriptionBuilder));
-                embed.setFooter("Requested by " + user.getEffectiveName());
+                embed.setFooter("From all the servers.");
                 embed.setColor(constants.color);
                 event.replyEmbeds(embed.build()).queue();
 
