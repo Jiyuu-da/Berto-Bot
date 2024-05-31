@@ -1,6 +1,7 @@
 package org.example.listeners;
 import net.dv8tion.jda.api.events.guild.GuildReadyEvent;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
+import net.dv8tion.jda.api.interactions.commands.Command;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.CommandData;
 import net.dv8tion.jda.api.interactions.commands.build.Commands;
@@ -87,6 +88,10 @@ public class slashCommandManager extends ListenerAdapter {
 
         commandData.add(Commands.slash("poor", "look for smth on the streets"));
 
+        OptionData slotBet = new OptionData(OptionType.INTEGER, "bet", "bet your amount", true);
+        commandData.add(Commands.slash("slot", "play on the slot machine").addOptions(slotBet));
+
+        commandData.add(Commands.slash("leaderboard", "look at the bank leaderboard"));
 
         event.getGuild().updateCommands().addCommands(commandData).queue();
         super.onGuildReady(event);

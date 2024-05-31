@@ -31,7 +31,6 @@ public class CheckBalance extends ListenerAdapter {
         config.addDataSourceProperty("prepStmtCacheSqlLimit", "2048");
         ds = new HikariDataSource(config);
     }
-     coinflip object = new coinflip();
     @Override
 
     public void onSlashCommandInteraction(SlashCommandInteractionEvent event) {
@@ -39,8 +38,6 @@ public class CheckBalance extends ListenerAdapter {
         String userID = event.getUser().getId();
 
         OptionMapping userOption = event.getOption("user");
-
-
 
         if(command.equalsIgnoreCase("check")) {
 

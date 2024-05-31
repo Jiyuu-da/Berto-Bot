@@ -103,4 +103,31 @@ public class DBSetup {
         }
     }
 
+    public static List<Economy> getSortedBalance () throws SQLException {
+        String SQL_SORT = "SELECT user_bal, user_id FROM eco_table ORDER BY user_bal DESC LIMIT 6";
+        List<Economy> users = new ArrayList<>();
+
+        try (Connection con = ds.getConnection();
+             PreparedStatement pst = con.prepareStatement(SQL_SORT);
+             ResultSet rs = pst.executeQuery()) {
+
+            while (rs.next()) {
+                Economy economy = new Economy();
+                economy.setUser_id(rs.getString("user_id"));
+                economy.setUser_bal(rs.getDouble("user_bal"));
+
+                users.add(economy);
+            }
+        }
+
+        return users;
+    }
+
+    public static void main(String[] args) throws SQLException {
+        List<Economy> users = getSortedBalance();
+        for (Economy user : users) {
+            System.out.println(user.getUser_id() + "\t\t" + user.getUser_bal());
+        }
+    }
+
 }
