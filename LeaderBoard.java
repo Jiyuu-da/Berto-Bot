@@ -59,17 +59,26 @@ public class LeaderBoard extends ListenerAdapter {
                     maxIdLength = Math.max(maxIdLength, id.length());
                 }
 
-
+                int pos = 1;
 
                 for (Economy i : users) {
-                    int pos = 1;
                     String balance = String.valueOf((int) i.getUser_bal());
                     String id = String.valueOf(i.getUser_id());
 
                     balance = String.format("%" + maxBalanceLength + "s", balance);
+                    String emote;
 
+                    if(pos == 1) {
+                        emote = ":first_place:";
+                    } else if (pos==2) {
+                        emote = ":second_place:";
+                    } else if (pos == 3) {
+                        emote = ":third_place:";
+                    } else {
+                        emote = ":coin:";
+                    }
 
-                    descriptionBuilder.append(pos + ". ").append("**`").append(balance).append("`** :coin:").append("<@!").append(id).append(">").append("\n");
+                    descriptionBuilder.append(pos + ". ").append("**`").append(balance).append("`** " + emote + "\t").append("<@!").append(id).append(">").append("\n");
                     pos +=1;
                 }
 
@@ -84,8 +93,6 @@ public class LeaderBoard extends ListenerAdapter {
             } catch (SQLException e) {
                 throw new RuntimeException(e);
             }
-        } else {
-            event.reply("Command under maintenance").setEphemeral(true).queue();
         }
         super.onSlashCommandInteraction(event);
     }

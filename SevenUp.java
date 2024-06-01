@@ -2,6 +2,7 @@ package org.example.listeners;
 
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
+import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
@@ -43,6 +44,8 @@ public void onSlashCommandInteraction(SlashCommandInteractionEvent event) {
         int bet = optionBet.getAsInt();
 
         if(command.equalsIgnoreCase("7up7down")) {
+
+            EmbedBuilder embed = new EmbedBuilder();
             try {
                 if(BankCreate.hasAccount(userID)) {
                     try {
@@ -61,67 +64,56 @@ public void onSlashCommandInteraction(SlashCommandInteractionEvent event) {
                                 User user = event.getUser();
 
                                 int outcome1 = (int) (Math.random() * (6) + 1);
-//                                int outcome1 = 6;
                                 int outcome2 = (int) (Math.random() * (6) + 1);
-//                                int outcome2 = 1;
                                 int result = outcome1 + outcome2;
 
+                                boolean win;
+
+                                if ((result > 7 && num > 7) || (result < 7 && num < 7) || (result == 7 && num == 7)) {
+                                    win = true;
+                                } else {
+                                    win = false;
+                                }
+
+                                String displayResult;
 
                                 if(result > 7) {
-                                    if(num > 7) {
-                                        int updatedAmount = (int)(userBalance + 1.5*bet);
-                                        DBSetup.updateBalanceInDatabase(userID, updatedAmount);
-                                        event.reply(user.getAsMention() + "You picked **7 Up**, it was **7 Up** You Won! You now have " + updatedAmount+" coins :coin:").setEphemeral(false).queue();
-                                    }
-                                    else if (num==7) {
-                                        int updatedAmount = userBalance - bet;
-                                        DBSetup.updateBalanceInDatabase(userID, updatedAmount);
-                                        event.reply(user.getAsMention() + "You picked **7**, it was **7 Up** You Lost... You now have "+ updatedAmount+" coins :coin:").setEphemeral(false).queue();
-
-                                    }
-                                    else {
-                                        int updatedAmount = userBalance - bet;
-                                        DBSetup.updateBalanceInDatabase(userID, updatedAmount);
-                                        event.reply(user.getAsMention() + "You picked **7 down**, it was **7 Up** You Lost... You now have "+ updatedAmount+" coins :coin:").setEphemeral(false).queue();
-
-                                    }
-                                } else if (result < 7) {
-                                    if(num < 7) {
-                                        int updatedAmount = (int)(userBalance + 1.5*bet);
-                                        DBSetup.updateBalanceInDatabase(userID, updatedAmount);
-                                        event.reply(user.getAsMention() + "You picked **7 Down**, it was **7 Down** You Won! You now have " + updatedAmount+" coins :coin:").setEphemeral(false).queue();
-                                    }
-                                    else if(num==7) {
-                                        int updatedAmount = userBalance - bet;
-                                        DBSetup.updateBalanceInDatabase(userID, updatedAmount);
-                                        event.reply(user.getAsMention() + "You picked **7**, it was **7 Down** You Lost... You now have " + updatedAmount+" coins :coin:").setEphemeral(false).queue();
-
-                                    }
-                                    else {
-                                        int updatedAmount = userBalance - bet;
-                                        DBSetup.updateBalanceInDatabase(userID, updatedAmount);
-                                        event.reply(user.getAsMention() + "You picked **7 Up**, it was **7 Down** You Lost... You now have " + updatedAmount+" coins :coin:").setEphemeral(false).queue();
-
-                                    }
+                                    displayResult = "7 up";
+                                } else if(result < 7) {
+                                    displayResult = "7 down";
+                                } else {
+                                    displayResult = "7";
                                 }
-                                else {
-                                    if(num==7) {
-                                        int updatedAmount = (int)(userBalance + 3*bet);
-                                        DBSetup.updateBalanceInDatabase(userID, updatedAmount);
-                                        event.reply(user.getAsMention() + "You picked **7**, it was **7** You Won! You now have " + updatedAmount+" coins :coin:").setEphemeral(false).queue();
-                                    }
-                                    else if(num > 7) {
-                                        int updatedAmount = userBalance - bet;
-                                        DBSetup.updateBalanceInDatabase(userID, updatedAmount);
-                                        event.reply(user.getAsMention() + "You picked **7 Up**, it was **7** You Lost... You now have " + updatedAmount+" coins :coin:").setEphemeral(false).queue();
-                                    }
-                                    else {
-                                        int updatedAmount = userBalance - bet;
-                                        DBSetup.updateBalanceInDatabase(userID, updatedAmount);
-                                        event.reply(user.getAsMention() + "You picked **7 Down**, it was **7** You Lost... You now have " + updatedAmount+" coins :coin:").setEphemeral(false).queue();
 
+                                int updatedAmount;
+
+                                if(win) {
+                                    if(result == 7) {
+                                        updatedAmount = (int)(userBalance + 3*bet);
+                                        DBSetup.updateBalanceInDatabase(userID, updatedAmount);
+                                    } else {
+                                        updatedAmount = (int)(userBalance + 2.2*bet);
+                                        DBSetup.updateBalanceInDatabase(userID, updatedAmount);
                                     }
+
+                                    embed.setColor(constants.WIN_COLOR);
+                                    embed.setTitle("7 up 7 Down");
+                                    embed.setDescription(user.getAsMention() + "You picked **"+ sum + "**, it was **" +displayResult+ "** You Won! You now have " + updatedAmount+" coins :coin:");
+                                    event.replyEmbeds(embed.build()).queue();
+
+                                } else {
+                                    updatedAmount = userBalance - bet;
+                                    DBSetup.updateBalanceInDatabase(userID, updatedAmount);
+
+                                    embed.setColor(constants.LOST_COLOR);
+                                    embed.setTitle("7 up 7 Down");
+                                    embed.setDescription(user.getAsMention() + "You picked **"+ sum + "**, it was **" +displayResult+ "** You Lost... You now have " + updatedAmount+" coins :coin:");
+                                    event.replyEmbeds(embed.build()).queue();
                                 }
+
+                                System.out.println("result :" + result +"\ndisplayResult : " + displayResult + "\n" +"sum : " + sum + "\n" +"num : " + num);
+
+
                         }else {
                                 event.reply("You do not have sufficient balance, missing "+
                                         diff+ " coins :coin:").setEphemeral(true).queue();

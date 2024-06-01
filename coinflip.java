@@ -1,5 +1,7 @@
 package org.example.listeners;
 
+import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.entities.User;
 import org.example.listeners.db.BankCreate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,6 +51,8 @@ public class coinflip extends ListenerAdapter {
             String type = typeOption.getAsString().toLowerCase();
             int bet = betOption.getAsInt();
 
+            EmbedBuilder embed = new EmbedBuilder();
+
 
             try {
                 if (BankCreate.hasAccount(userID)) {
@@ -57,6 +61,9 @@ public class coinflip extends ListenerAdapter {
                             int userBalance = DBSetup.getBalanceFromDatabase(userID);
                             int difference = bet - userBalance;
                             if ((bet <= userBalance)) {
+
+                                User user_e = event.getUser();
+
                                 boolean won;
                                 double random = Math.random();
                                 String outcome;
@@ -72,15 +79,29 @@ public class coinflip extends ListenerAdapter {
                                     won = false;
                                 }
 
+
                                 if (won) {
                                     int updatedBalance = userBalance + bet;
                                     DBSetup.updateBalanceInDatabase(userID, updatedBalance);
                                     logger.info("Amount updated : {}", userID);
-                                    event.reply(user + " You Won and doubled your bet, you now have " + (userBalance + bet) + " coins :coin:").setEphemeral(false).queue();
+
+                                    embed.setTitle("Coinflip");
+                                    embed.setDescription(user + " You Won and doubled your bet, you now have " + (userBalance + bet) + " coins :coin:");
+                                    embed.setColor(constants.WIN_COLOR);
+                                    event.replyEmbeds(embed.build()).queue();
+
+
+//                                    event.reply(user + " You Won and doubled your bet, you now have " + (userBalance + bet) + " coins :coin:").setEphemeral(false).queue();
 
                                 } else {
                                     int updatedBalance = userBalance - bet;
                                     DBSetup.updateBalanceInDatabase(userID, updatedBalance);
+
+                                    embed.setTitle("Coinflip");
+                                    embed.setDescription(user + " You Lost.. you now have " + (userBalance - bet) + " coins :coin:");
+                                    embed.setColor(constants.LOST_COLOR);
+                                    event.replyEmbeds(embed.build()).queue();
+
                                     event.reply(user + " You Lost.. you now have " + (userBalance - bet) + " coins :coin:").setEphemeral(false).queue();
 
                                 }

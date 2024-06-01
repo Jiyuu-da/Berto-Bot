@@ -150,6 +150,7 @@ public class SlotMachine extends ListenerAdapter {
 
                                         if(win) {
                                             embed.addField("Result", "WON " + (int)(2.5*bet) + "!! :coin:", true);
+                                            embed.setColor(constants.WIN_COLOR);
                                             int updatedAmount = (int)(userBalance + 2.5*bet);
                                             try {
                                                 DBSetup.updateBalanceInDatabase(userID, updatedAmount);
@@ -159,6 +160,7 @@ public class SlotMachine extends ListenerAdapter {
                                         }
                                         else {
                                             embed.addField("Result", "Lost " + bet + " :coin:", true);
+                                            embed.setColor(constants.LOST_COLOR);
                                         }
 
                                         event.getHook().editOriginalEmbeds(embed.build()).queue();

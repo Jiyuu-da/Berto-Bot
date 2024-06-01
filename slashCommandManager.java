@@ -81,8 +81,8 @@ public class slashCommandManager extends ListenerAdapter {
 
         OptionData sevenBet = new OptionData(OptionType.INTEGER, "bet", "bet your amount", true);
         OptionData sevenNum = new OptionData(OptionType.STRING, "sum", "Up Down or 7", true)
-                .addChoice("up", "up")
-                .addChoice("down", "down")
+                .addChoice("7 up", "up")
+                .addChoice("7 down", "down")
                 .addChoice("7", "7");
         commandData.add(Commands.slash("7up7down", "Play 7 up 7 down"). addOptions(sevenBet, sevenNum));
 

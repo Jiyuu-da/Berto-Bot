@@ -2,6 +2,7 @@ package org.example.listeners;
 
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
+import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
@@ -38,6 +39,8 @@ public class Fish extends ListenerAdapter {
 
         if(command.equalsIgnoreCase("fish")) {
 
+            EmbedBuilder embed = new EmbedBuilder();
+
             try {
                 if(BankCreate.hasAccount(userID)) {
                     try {
@@ -67,13 +70,26 @@ public class Fish extends ListenerAdapter {
                                     result = fish[fishChoice];
                                     int updatedAmount = (int)(userBalance + 1.5*bet);
                                     DBSetup.updateBalanceInDatabase(userID, updatedAmount);
-                                    event.reply( user.getAsMention() + " You caught a " + result + " and increased your bet, you now have " + updatedAmount+ " coins :coin:").setEphemeral(false).queue();
+
+                                    embed.setTitle("Fish");
+                                    embed.setDescription( user.getAsMention() + " You caught a " + result + " and increased your bet, you now have " + updatedAmount+ " coins :coin:");
+                                    embed.setColor(constants.WIN_COLOR);
+                                    event.replyEmbeds(embed.build()).queue();
+
+//                                    event.reply( user.getAsMention() + " You caught a " + result + " and increased your bet, you now have " + updatedAmount+ " coins :coin:").setEphemeral(false).queue();
+
                                 } else {
                                     int objectChoice = (int)(Math.random()*objects.length);
                                     result = objects[objectChoice];
                                     int updatedAmount = userBalance - bet;
                                     DBSetup.updateBalanceInDatabase(userID, updatedAmount);
-                                    event.reply( user.getAsMention() + " You caught a " + result + " you lost your bet, you now have " + updatedAmount + " coins :coin:").setEphemeral(false).queue();
+
+                                    embed.setTitle("Fish");
+                                    embed.setDescription( user.getAsMention() + " You caught a " + result + " you lost your bet, you now have " + updatedAmount + " coins :coin:");
+                                    embed.setColor(constants.LOST_COLOR);
+                                    event.replyEmbeds(embed.build()).queue();
+
+//                                    event.reply( user.getAsMention() + " You caught a " + result + " you lost your bet, you now have " + updatedAmount + " coins :coin:").setEphemeral(false).queue();
                                 }
                             } else {
                                 event.reply("You do not have sufficient balance, missing "+

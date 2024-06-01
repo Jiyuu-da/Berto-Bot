@@ -45,7 +45,7 @@ public class Work extends ListenerAdapter {
                             "Police Officer", "Firefighter", "Pilot","Nurse", "Scientist", "Athlete","Musician", "Photographer", "Actor", "Farmer","Electrician", "Director"
                     };
 
-                    int rd = (int)(Math.random()*25);
+                    int rd = (int)(Math.random()*workOptions.length);
                     int amount = (int)(Math.random()*81) + 10;
                     String work = workOptions[rd];
 
