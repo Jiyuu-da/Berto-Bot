@@ -147,11 +147,12 @@ public class SlotMachine extends ListenerAdapter {
                                         embed.addField("Player", user.getAsMention(), true);
                                         embed.addField("Bet", String.valueOf(bet) + " :coin:", true);
 
+                                        int updatedAmount;
 
                                         if(win) {
                                             embed.addField("Result", "WON " + (int)(2.5*bet) + "!! :coin:", true);
                                             embed.setColor(constants.WIN_COLOR);
-                                            int updatedAmount = (int)(userBalance + 2.5*bet);
+                                            updatedAmount = (int)(userBalance + 3.3*bet);
                                             try {
                                                 DBSetup.updateBalanceInDatabase(userID, updatedAmount);
                                             } catch (SQLException e) {
@@ -159,6 +160,12 @@ public class SlotMachine extends ListenerAdapter {
                                             }
                                         }
                                         else {
+                                            try {
+                                                updatedAmount = userBalance - bet;
+                                                DBSetup.updateBalanceInDatabase(userID, updatedAmount);
+                                            } catch (SQLException e) {
+                                                throw new RuntimeException(e);
+                                            }
                                             embed.addField("Result", "Lost " + bet + " :coin:", true);
                                             embed.setColor(constants.LOST_COLOR);
                                         }

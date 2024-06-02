@@ -41,7 +41,7 @@ public class Daily extends ListenerAdapter {
 
             try {
                 if(BankCreate.hasAccount(userId)) {
-                    int amount = (int)(Math.random()*251) + 50;
+                    int amount = (int)(Math.random()*990) + 10;
 
                     try {
                         if (canClaimDaily(userId)) {

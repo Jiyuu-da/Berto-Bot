@@ -2,6 +2,7 @@ package org.example.listeners;
 import net.dv8tion.jda.api.events.guild.GuildReadyEvent;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.Command;
+import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.CommandData;
 import net.dv8tion.jda.api.interactions.commands.build.Commands;
@@ -92,6 +93,19 @@ public class slashCommandManager extends ListenerAdapter {
         commandData.add(Commands.slash("slot", "play on the slot machine").addOptions(slotBet));
 
         commandData.add(Commands.slash("leaderboard", "look at the bank leaderboard"));
+
+        OptionData rouletteBet = new OptionData(OptionType.INTEGER, "bet", "bet your amount", true);
+        OptionData rouletteType = new OptionData(OptionType.STRING, "type", "give the type")
+                 .addChoice("Red", "red")
+                .addChoice("Black", "black")
+                .addChoice("Even", "even")
+                .addChoice("Odd", "odd")
+                .addChoice("1-12", "1-12")
+                .addChoice("13-24", "13-24")
+                .addChoice("25-36", "25-36");
+        OptionData rouletteNum = new OptionData(OptionType.INTEGER, "SpecificNumber", "Number to bet on");
+
+        commandData.add(Commands.slash("roulette", "remember to add the type of bet").addOptions(rouletteBet, rouletteType, rouletteNum));
 
         event.getGuild().updateCommands().addCommands(commandData).queue();
         super.onGuildReady(event);

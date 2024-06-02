@@ -39,6 +39,15 @@ public void onSlashCommandInteraction(SlashCommandInteractionEvent event) {
         OptionMapping optionNum = event.getOption("sum");
 
         String sum = optionNum.getAsString();
+        String displaySum;
+
+        if(sum.equalsIgnoreCase("down")) {
+            displaySum = "7 down";
+        } else if(sum.equalsIgnoreCase("up")) {
+            displaySum = "7 up";
+        } else {
+            displaySum = "7";
+        }
 
         int num = 0;
         int bet = optionBet.getAsInt();
@@ -77,6 +86,7 @@ public void onSlashCommandInteraction(SlashCommandInteractionEvent event) {
 
                                 String displayResult;
 
+
                                 if(result > 7) {
                                     displayResult = "7 up";
                                 } else if(result < 7) {
@@ -98,7 +108,7 @@ public void onSlashCommandInteraction(SlashCommandInteractionEvent event) {
 
                                     embed.setColor(constants.WIN_COLOR);
                                     embed.setTitle("7 up 7 Down");
-                                    embed.setDescription(user.getAsMention() + "You picked **"+ sum + "**, it was **" +displayResult+ "** You Won! You now have " + updatedAmount+" coins :coin:");
+                                    embed.setDescription(user.getAsMention() + " You picked **"+ displaySum + "**, it was **" +displayResult+ "** You Won! You now have " + updatedAmount+" coins :coin:");
                                     event.replyEmbeds(embed.build()).queue();
 
                                 } else {
@@ -107,11 +117,9 @@ public void onSlashCommandInteraction(SlashCommandInteractionEvent event) {
 
                                     embed.setColor(constants.LOST_COLOR);
                                     embed.setTitle("7 up 7 Down");
-                                    embed.setDescription(user.getAsMention() + "You picked **"+ sum + "**, it was **" +displayResult+ "** You Lost... You now have " + updatedAmount+" coins :coin:");
+                                    embed.setDescription(user.getAsMention() + " You picked **"+ displaySum + "**, it was **" +displayResult+ "** You Lost... You now have " + updatedAmount+" coins :coin:");
                                     event.replyEmbeds(embed.build()).queue();
                                 }
-
-                                System.out.println("result :" + result +"\ndisplayResult : " + displayResult + "\n" +"sum : " + sum + "\n" +"num : " + num);
 
 
                         }else {

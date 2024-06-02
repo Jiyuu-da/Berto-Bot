@@ -68,7 +68,7 @@ public class Fish extends ListenerAdapter {
                                 if(num <= 30) {
                                     int fishChoice = (int)(Math.random()* fish.length);
                                     result = fish[fishChoice];
-                                    int updatedAmount = (int)(userBalance + 1.5*bet);
+                                    int updatedAmount = (int)(userBalance + 2.5*bet);
                                     DBSetup.updateBalanceInDatabase(userID, updatedAmount);
 
                                     embed.setTitle("Fish");

@@ -46,7 +46,7 @@ public class Work extends ListenerAdapter {
                     };
 
                     int rd = (int)(Math.random()*workOptions.length);
-                    int amount = (int)(Math.random()*81) + 10;
+                    int amount = (int)(Math.random()*290) + 10;
                     String work = workOptions[rd];
 
                     if(canClaimWork(userID)) {

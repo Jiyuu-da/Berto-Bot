@@ -79,9 +79,9 @@ public class coinflip extends ListenerAdapter {
                                     won = false;
                                 }
 
-
+                                int updatedBalance;
                                 if (won) {
-                                    int updatedBalance = userBalance + bet;
+                                    updatedBalance = userBalance + bet;
                                     DBSetup.updateBalanceInDatabase(userID, updatedBalance);
                                     logger.info("Amount updated : {}", userID);
 
@@ -90,11 +90,8 @@ public class coinflip extends ListenerAdapter {
                                     embed.setColor(constants.WIN_COLOR);
                                     event.replyEmbeds(embed.build()).queue();
 
-
-//                                    event.reply(user + " You Won and doubled your bet, you now have " + (userBalance + bet) + " coins :coin:").setEphemeral(false).queue();
-
                                 } else {
-                                    int updatedBalance = userBalance - bet;
+                                    updatedBalance = userBalance - bet;
                                     DBSetup.updateBalanceInDatabase(userID, updatedBalance);
 
                                     embed.setTitle("Coinflip");
