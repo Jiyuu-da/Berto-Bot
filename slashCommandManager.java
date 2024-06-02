@@ -95,6 +95,7 @@ public class slashCommandManager extends ListenerAdapter {
         commandData.add(Commands.slash("leaderboard", "look at the bank leaderboard"));
 
         OptionData rouletteBet = new OptionData(OptionType.INTEGER, "bet", "bet your amount", true);
+        OptionData rouletteNum = new OptionData(OptionType.INTEGER, "number", "Number to bet on");
         OptionData rouletteType = new OptionData(OptionType.STRING, "type", "give the type")
                  .addChoice("Red", "red")
                 .addChoice("Black", "black")
@@ -103,7 +104,6 @@ public class slashCommandManager extends ListenerAdapter {
                 .addChoice("1-12", "1-12")
                 .addChoice("13-24", "13-24")
                 .addChoice("25-36", "25-36");
-        OptionData rouletteNum = new OptionData(OptionType.INTEGER, "SpecificNumber", "Number to bet on");
 
         commandData.add(Commands.slash("roulette", "remember to add the type of bet").addOptions(rouletteBet, rouletteType, rouletteNum));
 

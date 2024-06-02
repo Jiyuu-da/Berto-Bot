@@ -1,21 +1,21 @@
 package org.example.listeners;
 
+import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.entities.User;
-import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
-import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
+import net.dv8tion.jda.internal.entities.UserImpl;
 import org.example.listeners.db.BankCreate;
 import org.example.listeners.db.DBSetup;
 
-import javax.swing.text.html.Option;
 import java.sql.SQLException;
-import java.util.Arrays;
 import java.util.Random;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 public class Roulette extends ListenerAdapter {
     private String user_id;
@@ -40,20 +40,24 @@ public class Roulette extends ListenerAdapter {
         String userID = event.getUser().getId();
 
         OptionMapping optionBet = event.getOption("bet");
+        OptionMapping optionNum = event.getOption("number");
         OptionMapping optionType = event.getOption("type");
-        OptionMapping optionNum = event.getOption("SpecificNumber");
+
+        final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
 
 
         int bet = optionBet.getAsInt();
-        String type = optionType.getAsString();
+        int chosenNum = optionNum != null ? optionNum.getAsInt() : -1; // default value for no number
+        String type = optionType != null ? optionType.getAsString() : null;
 
-        int chosenNum = optionNum.getAsInt();
+        System.out.println("num value " + chosenNum);
+        System.out.println("type value " + type);
 
-        System.out.println("num value " + String.valueOf(chosenNum));
-
-        if(command.equalsIgnoreCase("roulette") && userID.equalsIgnoreCase("576834455306633216")) {
+        if(command.equalsIgnoreCase("roulette")) {
             try {
                 if(BankCreate.hasAccount(userID)) {
+                    User user = event.getUser();
+
                     int userBalance = DBSetup.getBalanceFromDatabase(userID);
                     int diff = bet - userBalance;
 
@@ -67,65 +71,75 @@ public class Roulette extends ListenerAdapter {
                             }
 
                             int[] redNums = {1, 3, 5, 7, 9, 12, 14, 16, 18, 19, 21, 23, 25, 27, 30, 32, 34, 36};
-                            int[] blackNums = {2, 4, 6, 8, 10, 11, 13, 15, 17, 20, 22, 24, 26, 28, 29, 31, 33, 35};
 
                             Random random = new Random();
                             int ballNum = random.nextInt(36) + 1;
 
-                            String color = "black";
-
-                            for(int i : redNums) {
-                                if(ballNum == i) {
-                                    color = "red";
-                                    break;
-                                }
-                            }
+                            String color = getColor(ballNum);
 
                             String even_or_odd = isEven(ballNum);
 
-                            boolean first_12 = false;
-                            boolean second_12 = false;
-                            boolean third_12 = false;
+                            boolean first_12 = ballNum < 13;
+                            boolean second_12 = ballNum >=13 && ballNum < 25;
+                            boolean third_12 = ballNum >=25 ;
 
                             int multiplier = getMultiplier(type);
 
-                            if(ballNum < 13) {
-                                first_12 = true;
-                            } else if(ballNum >=13 && ballNum < 25) {
-                                second_12 =true;
-                            } else {
-                                third_12 = true;
-                            }
-
-                            System.out.println(first_12);
-                            System.out.println(second_12);
-
-                            System.out.println(third_12);
-
-                            boolean win = win(type, color, even_or_odd, first_12, second_12, third_12);
-
-                            if(chosenNum != 0) {
-
-                            }
+                            boolean win = (type == null) ? winWithNumber(chosenNum, ballNum) : win(type, color, even_or_odd, first_12, second_12, third_12);
 
 
-                            System.out.println(ballNum);
-                            System.out.println(color);
+                            EmbedBuilder spinningEmbed = new EmbedBuilder();
+                            spinningEmbed.setTitle("Roulette");
+                            spinningEmbed.setColor(constants.color);
+                            spinningEmbed.setImage("https://media.tenor.com/AQQVuTU0ZjcAAAAj/casino.gif");
+                            event.replyEmbeds(spinningEmbed.build()).queue();
 
-                            System.out.println(type);
+                            scheduler.schedule((new Runnable() {
+                                @Override
+                                public void run() {
 
-                            EmbedBuilder embed = new EmbedBuilder();
-                            embed.setTitle("Roulette");
-                            embed.setColor(constants.color);
-                            embed.setDescription(color + " " + ballNum);
-                            embed.setImage("https://media.tenor.com/AQQVuTU0ZjcAAAAj/casino.gif");
+                                    EmbedBuilder stillEmbed = new EmbedBuilder();
+                                    stillEmbed.setTitle("Roulette");
+                                    stillEmbed.setDescription(String.format(":%s_circle: %d", color, ballNum));
+                                    stillEmbed.setImage("https://cdn.discordapp.com/attachments/1246118669306822708/1246869241177833563/still_roulette.png?ex=665df4f8&is=665ca378&hm=b9acd3a582f88b29f6783d50a2d59b6dca576ccab33bc369893e4d1a1325704e&");
+                                    stillEmbed.addField("Player", event.getUser().getAsMention(), true);
+                                    stillEmbed.addField("Bet", bet + " :coin:", true);
 
-                            if(win) {
-                                embed.setFooter("You won");
-                            } else {
-                                embed.setFooter("You lost");
-                            }
-                            event.replyEmbeds(embed.build()).queue();
+                                    if(type!=null) {
+                                        stillEmbed.addField("On", type, true);
+                                    } else {
+                                        stillEmbed.addField("On", String.valueOf(chosenNum), true);
+                                    }
+
+
+                                    int updatedAmount;
+                                    if(win) {
+                                        try {
+                                            updatedAmount = (userBalance + multiplier * bet) ;
+                                            DBSetup.updateBalanceInDatabase(userID, updatedAmount);
+
+                                            stillEmbed.setColor(constants.WIN_COLOR);
+                                            stillEmbed.addField("Result", "WON " + multiplier * bet + "!! :coin:", true);
+                                        } catch (SQLException e) {
+                                            throw new RuntimeException(e);
+                                        }
+                                    } else {
+                                        try {
+                                            updatedAmount = userBalance - bet;
+                                            DBSetup.updateBalanceInDatabase(userID, updatedAmount);
+
+                                            stillEmbed.setColor(constants.LOST_COLOR);
+                                            stillEmbed.addField("Result", "Lost " + bet + " :coin:", true);
+                                        } catch (SQLException e) {
+                                            throw new RuntimeException(e);
+                                        }
+
+                                    }
+                                    event.getHook().editOriginalEmbeds(stillEmbed.build()).queue();
+                                }
+                            }), 5, TimeUnit.SECONDS);
+
+                            int updatedAmount;
 
 
 
@@ -154,19 +168,35 @@ public class Roulette extends ListenerAdapter {
         return "odd";
     }
     public static int getMultiplier(String type) {
+        if(type==null) return 36;
         switch(type.toLowerCase()) {
             case "even":
+                return 2;
             case "odd":
+                return 2;
             case "red":
+                return 2;
             case "black":
                 return 2;
             case "first_12":
+                return 3;
             case "second_12":
+                return 3;
             case "third_12":
                 return 3;
             default:
                 return 1;
         }
+    }
+
+    public static String getColor(int ballNum) {
+        int[] redNums = {1, 3, 5, 7, 9, 12, 14, 16, 18, 19, 21, 23, 25, 27, 30, 32, 34, 36};
+        for (int i : redNums) {
+            if (ballNum == i) {
+                return "red";
+            }
+        }
+        return "black";
     }
 
     public static boolean win(String betType, String color, String even_or_odd, boolean first_12, boolean second_12, boolean third_12) {
@@ -199,6 +229,6 @@ public class Roulette extends ListenerAdapter {
     }
 
     public static boolean winWithNumber(int chosenNum, int ballNum) {
-        return chosenNum == ballNum;
+        return ballNum == chosenNum;
     }
 }
