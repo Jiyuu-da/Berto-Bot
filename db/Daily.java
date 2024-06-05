@@ -1,7 +1,5 @@
 package org.example.listeners.db;
 
-import com.zaxxer.hikari.HikariConfig;
-import com.zaxxer.hikari.HikariDataSource;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.slf4j.Logger;
@@ -17,35 +15,20 @@ import java.time.temporal.ChronoUnit;
 public class Daily extends ListenerAdapter {
     private static final Logger logger = LoggerFactory.getLogger(Daily.class);
 
-    private static HikariConfig config = new HikariConfig();
-    private static HikariDataSource ds;
-
-    static {
-        config.setJdbcUrl("jdbc:mysql://localhost:3306/economy");
-        config.setUsername("root");
-        config.setPassword("K1r4root");
-        config.setDriverClassName("com.mysql.cj.jdbc.Driver");
-
-        config.addDataSourceProperty("cachePrepStmts", "true");
-        config.addDataSourceProperty("prepStmtCacheSize", "250");
-        config.addDataSourceProperty("prepStmtCacheSqlLimit", "2048");
-        ds = new HikariDataSource(config);
-    }
-
     @Override
     public void onSlashCommandInteraction(SlashCommandInteractionEvent event) {
         String command = event.getName();
+        final int MAX_AMOUNT = 200;
 
         if (command.equalsIgnoreCase("daily")) {
             String userId = event.getUser().getId();
 
             try {
-                if(BankCreate.hasAccount(userId)) {
-                    int amount = (int)(Math.random()*990) + 10;
+                if (BankCreate.hasAccount(userId)) {
+                    int amount = (int)(Math.random() * MAX_AMOUNT - 10) + 10;
 
                     try {
                         if (canClaimDaily(userId)) {
-
                             updateLastDailyTimestamp(userId);
                             // Code to give coins to the user
                             logger.info("User {} claimed daily reward.", userId);
@@ -69,7 +52,6 @@ public class Daily extends ListenerAdapter {
             } catch (SQLException e) {
                 throw new RuntimeException(e);
             }
-
         }
 
         super.onSlashCommandInteraction(event);
@@ -84,7 +66,7 @@ public class Daily extends ListenerAdapter {
     private Instant getLastDailyTimestamp(String userId) throws SQLException {
         String SQL_QUERY = "SELECT last_daily FROM eco_table WHERE user_id = ?";
 
-        try (Connection con = ds.getConnection();
+        try (Connection con = DBSetup.getConnection();
              PreparedStatement pst = con.prepareStatement(SQL_QUERY)) {
             pst.setString(1, userId);
             try (ResultSet rs = pst.executeQuery()) {
@@ -100,9 +82,9 @@ public class Daily extends ListenerAdapter {
     }
 
     private void updateLastDailyTimestamp(String userId) throws SQLException {
-        String SQL_UPDATE = "UPDATE eco_table SET last_daily = NOW() WHERE user_id = ?";
+        String SQL_UPDATE = "UPDATE eco_table SET last_daily = CURRENT_TIMESTAMP WHERE user_id = ?";
 
-        try (Connection con = ds.getConnection();
+        try (Connection con = DBSetup.getConnection();
              PreparedStatement pst = con.prepareStatement(SQL_UPDATE)) {
             pst.setString(1, userId);
             pst.executeUpdate();

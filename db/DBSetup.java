@@ -1,38 +1,17 @@
 package org.example.listeners.db;
 
-import com.zaxxer.hikari.HikariConfig;
-import com.zaxxer.hikari.HikariDataSource;
-
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
 public class DBSetup {
-    private String user_id;
-    private double user_bal;
-    private static HikariConfig config = new HikariConfig();
-    private static HikariDataSource ds;
-
-    static {
-        config.setJdbcUrl("jdbc:mysql://localhost:3306/economy");
-        config.setUsername("root");
-        config.setPassword("K1r4root");
-        config.setDriverClassName("com.mysql.cj.jdbc.Driver");
-
-        config.addDataSourceProperty("cachePrepStmts", "true");
-        config.addDataSourceProperty("prepStmtCacheSize", "250");
-        config.addDataSourceProperty("prepStmtCacheSqlLimit", "2048");
-        ds = new HikariDataSource(config);
-    }
+    private static final String JDBC_URL = "jdbc:sqlite:economy.db";
 
     public static List<Economy> fetchData() throws SQLException {
         String SQL_QUERY = "SELECT * FROM eco_table";
         List<Economy> users = new ArrayList<>();
 
-        try (Connection con = ds.getConnection();
+        try (Connection con = DriverManager.getConnection(JDBC_URL);
              PreparedStatement pst = con.prepareStatement(SQL_QUERY);
              ResultSet rs = pst.executeQuery()) {
 
@@ -48,36 +27,15 @@ public class DBSetup {
         return users;
     }
 
-    public DBSetup(String user_id, double user_bal) {
-        this.user_id = user_id;
-        this.user_bal = user_bal;
-    }
-
-    public String getUser_id() {
-        return user_id;
-    }
-
-    public void setUser_id(String user_id) {
-        this.user_id = user_id;
-    }
-
-    public double getUser_bal() {
-        return user_bal;
-    }
-
-    public void setUser_bal(double user_bal) {
-        this.user_bal = user_bal;
-    }
-
     public static Connection getConnection() throws SQLException {
-        return ds.getConnection();
+        return DriverManager.getConnection(JDBC_URL);
     }
 
     public static int getBalanceFromDatabase(String userId) throws SQLException {
         int balance = 0;
         String SQL_QUERY = "SELECT user_bal FROM eco_table WHERE user_id = ?";
 
-        try (Connection con = ds.getConnection();
+        try (Connection con = DriverManager.getConnection(JDBC_URL);
              PreparedStatement pst = con.prepareStatement(SQL_QUERY)) {
             pst.setString(1, userId);
             try (ResultSet rs = pst.executeQuery()) {
@@ -95,7 +53,7 @@ public class DBSetup {
     public static void updateBalanceInDatabase(String userId, int updatedBalance) throws SQLException {
         String SQL_UPDATE = "UPDATE eco_table SET user_bal = ? WHERE user_id = ?";
 
-        try (Connection con = ds.getConnection();
+        try (Connection con = DriverManager.getConnection(JDBC_URL);
              PreparedStatement pst = con.prepareStatement(SQL_UPDATE)) {
             pst.setInt(1, updatedBalance);
             pst.setString(2, userId);
@@ -103,11 +61,11 @@ public class DBSetup {
         }
     }
 
-    public static List<Economy> getSortedBalance () throws SQLException {
+    public static List<Economy> getSortedBalance() throws SQLException {
         String SQL_SORT = "SELECT user_bal, user_id FROM eco_table ORDER BY user_bal DESC LIMIT 10";
         List<Economy> users = new ArrayList<>();
 
-        try (Connection con = ds.getConnection();
+        try (Connection con = DriverManager.getConnection(JDBC_URL);
              PreparedStatement pst = con.prepareStatement(SQL_SORT);
              ResultSet rs = pst.executeQuery()) {
 
@@ -122,12 +80,5 @@ public class DBSetup {
 
         return users;
     }
-
-    public static void main(String[] args) throws SQLException {
-        List<Economy> users = getSortedBalance();
-        for (Economy user : users) {
-            System.out.println(user.getUser_id() + "\t\t" + user.getUser_bal());
-        }
-    }
-
 }
+
