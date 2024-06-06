@@ -212,7 +212,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 public class SlotMachine extends ListenerAdapter {
-    private static final String DB_URL = "jdbc:sqlite:your_database_path.db";
+    private static final String DB_URL = "jdbc:sqlite:economy.db";
 
     @Override
     public void onSlashCommandInteraction(SlashCommandInteractionEvent event) {

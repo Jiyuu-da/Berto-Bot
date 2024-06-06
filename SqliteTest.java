@@ -7,7 +7,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 
 public class SqliteTest {
-    private static final String JDBC_URL = "jdbc:sqlite:/Users/chaks/bot/economy.db";
+    private static final String JDBC_URL = "jdbc:sqlite:economy.db";
 
     public static Connection getConnection() throws SQLException {
         return DriverManager.getConnection(JDBC_URL);

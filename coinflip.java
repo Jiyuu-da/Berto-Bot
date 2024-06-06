@@ -162,7 +162,7 @@ import java.sql.SQLException;
 public class coinflip extends ListenerAdapter {
     private static final Logger logger = LoggerFactory.getLogger(coinflip.class);
 
-    private static final String DB_URL = "jdbc:sqlite:/Users/chaks/bot/economy.db";
+    private static final String DB_URL = "jdbc:sqlite:economy.db";
 
     @Override
     public void onSlashCommandInteraction(SlashCommandInteractionEvent event) {

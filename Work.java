@@ -116,11 +116,12 @@
 //        }
 //    }
 //}
-package org.example.listeners.db;
+package org.example.listeners;
 
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
-import org.example.listeners.SqliteTest;
+import org.example.listeners.db.BankCreate;
+import org.example.listeners.db.DBSetup;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -132,6 +133,8 @@ import java.sql.Timestamp;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 
+
+
 public class Work extends ListenerAdapter {
     private static final Logger logger = LoggerFactory.getLogger(Work.class);
 
@@ -139,6 +142,10 @@ public class Work extends ListenerAdapter {
     public void onSlashCommandInteraction(SlashCommandInteractionEvent event) {
         String command = event.getName();
         String userID = event.getUser().getId();
+
+
+        logger.info("Received /work command from user {}", userID);
+
         final int MAX_AMOUNT = 60;
 
         if(command.equalsIgnoreCase("work")) {
