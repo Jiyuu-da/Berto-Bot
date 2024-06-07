@@ -240,7 +240,6 @@
 
 package org.example.listeners;
 
-import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -257,7 +256,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 public class Roulette extends ListenerAdapter {
-    private static final String DB_URL = "jdbc:sqlite:your_database_path.db";
+    private static final String DB_URL = "jdbc:sqlite:economy.db";
 
     @Override
     public void onSlashCommandInteraction(SlashCommandInteractionEvent event) {
@@ -265,20 +264,25 @@ public class Roulette extends ListenerAdapter {
         String command = event.getName();
         String userID = event.getUser().getId();
 
-        OptionMapping optionBet = event.getOption("bet");
-        OptionMapping optionNum = event.getOption("number");
-        OptionMapping optionType = event.getOption("type");
-
-        final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
-
-        int bet = optionBet.getAsInt();
-        int chosenNum = optionNum != null ? optionNum.getAsInt() : -1; // default value for no number
-        String type = optionType != null ? optionType.getAsString() : null;
-
         if (command.equalsIgnoreCase("roulette")) {
+            OptionMapping optionBet = event.getOption("bet");
+            OptionMapping optionNum = event.getOption("number");
+            OptionMapping optionType = event.getOption("type");
+
+            if (optionNum == null && optionType == null) {
+                event.reply("You need to specify a 'Bet Type' or 'Number' ").setEphemeral(true).queue();
+                return;
+            }
+
+            final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
+
+            int bet = optionBet.getAsInt();
+            int chosenNum = optionNum != null ? optionNum.getAsInt() : -1; // default value for no number
+            String type = optionType != null ? optionType.getAsString() : null;
+
             try (Connection connection = DriverManager.getConnection(DB_URL)) {
                 if (BankCreate.hasAccount(userID)) {
-                    User user = event.getUser();
+
 
                     int userBalance = DBSetup.getBalanceFromDatabase(userID);
                     int diff = bet - userBalance;
@@ -388,17 +392,17 @@ public class Roulette extends ListenerAdapter {
         return "odd";
     }
 
-    public static int getMultiplier(String type) {
-        if (type == null) return 36;
-        switch (type.toLowerCase()) {
+    public static int getMultiplier(String betType) {
+        if (betType == null) return 36;
+        switch (betType.toLowerCase()) {
             case "even":
             case "odd":
             case "red":
             case "black":
                 return 2;
-            case "first_12":
-            case "second_12":
-            case "third_12":
+            case "1-12":
+            case "13-24":
+            case "25-36":
                 return 3;
             default:
                 return 1;
@@ -418,8 +422,10 @@ public class Roulette extends ListenerAdapter {
     public static boolean win(String betType, String color, String even_or_odd, boolean first_12, boolean second_12, boolean third_12) {
         if (betType.equalsIgnoreCase("red") || betType.equalsIgnoreCase("black")) {
             return betType.equalsIgnoreCase(color);
+
         } else if (betType.equalsIgnoreCase("even") || betType.equalsIgnoreCase("odd")) {
             return betType.equalsIgnoreCase(even_or_odd);
+
         } else if (betType.equalsIgnoreCase("1-12")) {
             return first_12;
         } else if (betType.equalsIgnoreCase("13-24")) {

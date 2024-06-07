@@ -89,7 +89,7 @@ import java.sql.SQLException;
 import java.util.Random;
 
 public class Poor extends ListenerAdapter {
-    private static final String DB_URL = "jdbc:sqlite:your_database_path.db";
+    private static final String DB_URL = "jdbc:sqlite:economy.db";
 
     @Override
     public void onSlashCommandInteraction(SlashCommandInteractionEvent event) {
@@ -107,13 +107,15 @@ public class Poor extends ListenerAdapter {
                 int probs = random.nextInt(100) + 1;
 
                 String[] cheapResponses = {
-                        "Ye le gareeb", "College ke bahar",
-                        "Aaj tere ghar paneer aayega, ye le",
-                        "Aur chahiye toh maang lena"
+                        "Here you go cheapskate",
+                        "Pizza night tonight, on me!",
+                        "Just ask if not enough :)"
                 };
                 String[] goodResponses = {
-                        "Aaj russian pakki :flag_ru:", "Engineering chodh de ab :money_mouth:",
-                        "Happy B'day :cake:", "Behen ke lode :eggplant:"
+                        "Time to travel Europe! :flag_eu:",
+                        "You can quit engineering now! :money_mouth:",
+                        "Happy Birthday! :cake:",
+                        "You lucky devil! :smirk:"
                 };
 
                 int responseIdxCheap = random.nextInt(cheapResponses.length);
@@ -128,7 +130,7 @@ public class Poor extends ListenerAdapter {
                         event.reply(user.getAsMention() + " " + cheapResponses[responseIdxCheap] + " " + money + " coins :coin:").setEphemeral(false).queue();
                     }
                 } else {
-                    event.reply(user.getAsMention() + " bsdk ghar bhaith jaa").setEphemeral(false).queue();
+                    event.reply(user.getAsMention() + " stay home, loser").setEphemeral(false).queue();
                 }
             } catch (SQLException e) {
                 throw new RuntimeException(e);

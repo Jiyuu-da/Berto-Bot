@@ -223,10 +223,15 @@ public class SlotMachine extends ListenerAdapter {
         String command = event.getName();
         String userID = event.getUser().getId();
 
-        OptionMapping optionBet = event.getOption("bet");
-        int bet = optionBet.getAsInt();
-
         if (command.equalsIgnoreCase("slot")) {
+
+            OptionMapping optionBet = event.getOption("bet");
+            int bet = optionBet.getAsInt();
+
+            if(optionBet == null) {
+                event.reply("You must specify a 'bet'").setEphemeral(true).queue();
+                return;
+            }
 
             try (Connection connection = DriverManager.getConnection(DB_URL)) {
                 if (BankCreate.hasAccount(userID)) {

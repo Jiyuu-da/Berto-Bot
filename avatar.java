@@ -6,12 +6,11 @@ import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEve
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
-import org.jetbrains.annotations.NotNull;
 
 
 public class avatar extends ListenerAdapter {
     @Override
-    public void onSlashCommandInteraction(@NotNull SlashCommandInteractionEvent event) {
+    public void onSlashCommandInteraction(SlashCommandInteractionEvent event) {
         String command = event.getName();
 
         if(command.equalsIgnoreCase("avatar")) {
