@@ -81,6 +81,7 @@ package org.example.listeners;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import org.example.Main;
 import org.example.listeners.db.DBSetup;
 
 import java.sql.Connection;
@@ -96,14 +97,19 @@ public class Poor extends ListenerAdapter {
         String command = event.getName();
         String userID = event.getUser().getId();
 
+        if(Main.maintenance && !userID.equals("576834455306633216")) {
+            event.reply("BertoBot is under maintenance.").setEphemeral(true).queue();
+            return;
+        }
+
         if (command.equalsIgnoreCase("poor")) {
             try (Connection connection = DriverManager.getConnection(DB_URL)) {
                 User user = event.getUser();
 
-                int userBalance = DBSetup.getBalanceFromDatabase(userID);
+                long userBalance = DBSetup.getBalanceFromDatabase(userID);
                 Random random = new Random();
 
-                int money = random.nextInt(10000) + 1;
+                long money = random.nextInt(10000) + 1;
                 int probs = random.nextInt(100) + 1;
 
                 String[] cheapResponses = {
@@ -122,7 +128,7 @@ public class Poor extends ListenerAdapter {
                 int responseIdxGood = random.nextInt(goodResponses.length);
 
                 if (probs == 1) {
-                    int updatedAmount = userBalance + money;
+                    long updatedAmount = userBalance + money;
                     DBSetup.updateBalanceInDatabase(userID, updatedAmount);
                     if (money > 5000) {
                         event.reply(user.getAsMention() + " " + goodResponses[responseIdxGood] + " " + money + " coins :coin:").setEphemeral(false).queue();

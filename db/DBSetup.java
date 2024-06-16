@@ -18,7 +18,7 @@ public class DBSetup {
             while (rs.next()) {
                 Economy economy = new Economy();
                 economy.setUser_id(rs.getString("user_id"));
-                economy.setUser_bal(rs.getDouble("user_bal"));
+                economy.setUser_bal(rs.getLong("user_bal"));
 
                 users.add(economy);
             }
@@ -31,8 +31,8 @@ public class DBSetup {
         return DriverManager.getConnection(JDBC_URL);
     }
 
-    public static int getBalanceFromDatabase(String userId) throws SQLException {
-        int balance = 0;
+    public static long getBalanceFromDatabase(String userId) throws SQLException {
+        long balance = 0;
         String SQL_QUERY = "SELECT user_bal FROM eco_table WHERE user_id = ?";
 
         try (Connection con = DriverManager.getConnection(JDBC_URL);
@@ -40,7 +40,7 @@ public class DBSetup {
             pst.setString(1, userId);
             try (ResultSet rs = pst.executeQuery()) {
                 if (rs.next()) {
-                    balance = rs.getInt("user_bal");
+                    balance = rs.getLong("user_bal");
                 }
             }
         } catch (SQLException e) {
@@ -50,12 +50,12 @@ public class DBSetup {
         return balance;
     }
 
-    public static void updateBalanceInDatabase(String userId, int updatedBalance) throws SQLException {
+    public static void updateBalanceInDatabase(String userId, long updatedBalance) throws SQLException {
         String SQL_UPDATE = "UPDATE eco_table SET user_bal = ? WHERE user_id = ?";
 
         try (Connection con = DriverManager.getConnection(JDBC_URL);
              PreparedStatement pst = con.prepareStatement(SQL_UPDATE)) {
-            pst.setInt(1, updatedBalance);
+            pst.setLong(1, updatedBalance);
             pst.setString(2, userId);
             pst.executeUpdate();
         }
@@ -72,7 +72,7 @@ public class DBSetup {
             while (rs.next()) {
                 Economy economy = new Economy();
                 economy.setUser_id(rs.getString("user_id"));
-                economy.setUser_bal(rs.getDouble("user_bal"));
+                economy.setUser_bal(rs.getLong("user_bal"));
 
                 users.add(economy);
             }

@@ -114,7 +114,7 @@ public class BankCreate extends ListenerAdapter {
             try {
                 if(!hasAccount(userID)) {
                     createAccount(userID);
-                    event.reply("Account created successfully, you have 100 coins :coin:").setEphemeral(true).queue();
+                    event.reply("Account created successfully, you have 500 coins :coin:").setEphemeral(true).queue();
                     logger.info("Account created for user ID: {}", userID);
 
                 }
@@ -131,7 +131,7 @@ public class BankCreate extends ListenerAdapter {
     }
 
     public void createAccount(String userId) {
-        String SQL_INSERT = "INSERT INTO eco_table (user_id, user_bal) VALUES (?, 100)";
+        String SQL_INSERT = "INSERT INTO eco_table (user_id, user_bal) VALUES (?, 500)";
 
 
         try (Connection con = DBSetup.getConnection();

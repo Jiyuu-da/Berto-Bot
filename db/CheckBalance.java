@@ -21,11 +21,11 @@ public class CheckBalance extends ListenerAdapter {
             try {
                 if (event.getOption("user") != null) {
                     String givenUserID = event.getOption("user").getAsUser().getId();
-                    int userBalance = DBSetup.getBalanceFromDatabase(givenUserID);
+                    long userBalance = DBSetup.getBalanceFromDatabase(givenUserID);
                     event.reply(event.getOption("user").getAsUser().getAsMention() + " has " + userBalance + " coins :coin:")
                             .setEphemeral(false).queue();
                 } else {
-                    int userBalance = DBSetup.getBalanceFromDatabase(userID);
+                    long userBalance = DBSetup.getBalanceFromDatabase(userID);
                     event.reply("You have " + userBalance + " coins :coin:").setEphemeral(true).queue();
                 }
             } catch (SQLException e) {

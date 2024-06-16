@@ -5,6 +5,7 @@ import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
+import org.example.Main;
 import org.example.listeners.db.BankCreate;
 import org.example.listeners.db.DBSetup;
 
@@ -19,6 +20,11 @@ public class SevenUp extends ListenerAdapter {
     public void onSlashCommandInteraction(SlashCommandInteractionEvent event) {
         String command = event.getName();
         String userID = event.getUser().getId();
+
+        if(Main.maintenance && !userID.equals("576834455306633216")) {
+            event.reply("BertoBot is under maintenance.").setEphemeral(true).queue();
+            return;
+        }
 
         if (command.equalsIgnoreCase("7up7down")) {
             final double MULTIPLIER_NON_SEVEN = 2.4;
@@ -45,7 +51,7 @@ public class SevenUp extends ListenerAdapter {
             }
 
             int num = 0;
-            int bet = optionBet.getAsInt();
+            long bet = optionBet.getAsLong();
 
             EmbedBuilder embed = new EmbedBuilder();
             try (Connection connection = DriverManager.getConnection(DB_URL)) {
@@ -58,8 +64,8 @@ public class SevenUp extends ListenerAdapter {
                         } else if (sum.equalsIgnoreCase("7")) {
                             num = 7;
                         }
-                        int userBalance = DBSetup.getBalanceFromDatabase(userID);
-                        int diff = bet - userBalance;
+                        long userBalance = DBSetup.getBalanceFromDatabase(userID);
+                        long diff = bet - userBalance;
                         if (bet > 0) {
                             if (bet <= userBalance) {
                                 User user = event.getUser();
@@ -86,14 +92,14 @@ public class SevenUp extends ListenerAdapter {
                                     displayResult = "7";
                                 }
 
-                                int updatedAmount;
+                                long updatedAmount;
 
                                 if (win) {
                                     if (result == 7) {
-                                        updatedAmount = (int) (userBalance + MULTIPLIER_SEVEN * bet);
+                                        updatedAmount = (long) (userBalance + bet * (MULTIPLIER_SEVEN - 1));
                                         DBSetup.updateBalanceInDatabase(userID, updatedAmount);
                                     } else {
-                                        updatedAmount = (int) (userBalance + MULTIPLIER_NON_SEVEN * bet);
+                                        updatedAmount = (long) (userBalance + bet * (MULTIPLIER_NON_SEVEN - 1));
                                         DBSetup.updateBalanceInDatabase(userID, updatedAmount);
                                     }
 

@@ -6,12 +6,19 @@ import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEve
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
+import org.example.Main;
 
 
 public class avatar extends ListenerAdapter {
     @Override
     public void onSlashCommandInteraction(SlashCommandInteractionEvent event) {
         String command = event.getName();
+        String userID = event.getUser().getId();
+
+        if(Main.maintenance && !userID.equals("576834455306633216")) {
+            event.reply("BertoBot is under maintenance.").setEphemeral(true).queue();
+            return;
+        }
 
         if(command.equalsIgnoreCase("avatar")) {
             OptionMapping userO = event.getOption("user");

@@ -36,7 +36,7 @@
 //        String userID = event.getUser().getId();
 //
 //        OptionMapping optionBet = event.getOption("bet");
-//        int bet = optionBet.getAsInt();
+//        long bet = optionBet.getAsInt();
 //
 //        if(command.equalsIgnoreCase("fish")) {
 //
@@ -45,7 +45,7 @@
 //            try {
 //                if(BankCreate.hasAccount(userID)) {
 //                    try {
-//                        int userBalance = DBSetup.getBalanceFromDatabase(userID);
+//                        long userBalance = DBSetup.getBalanceFromDatabase(userID);
 //                        int difference = bet - userBalance;
 //                        if(bet > 0) {
 //                            if(bet <= userBalance) {
@@ -140,7 +140,7 @@ public class Fish extends ListenerAdapter {
         if (command.equalsIgnoreCase("fish")) {
 
             OptionMapping optionBet = event.getOption("bet");
-            int bet = optionBet.getAsInt();
+            long bet = optionBet.getAsLong();
 
             if(optionBet == null) {
                 event.reply("You must specify a 'bet'").setEphemeral(true).queue();
@@ -152,8 +152,8 @@ public class Fish extends ListenerAdapter {
             try {
                 if (BankCreate.hasAccount(userID)) {
                     try {
-                        int userBalance = DBSetup.getBalanceFromDatabase(userID);
-                        int difference = bet - userBalance;
+                        long userBalance = DBSetup.getBalanceFromDatabase(userID);
+                        long difference = bet - userBalance;
                         if (bet > 0) {
                             if (bet <= userBalance) {
                                 String[] objects = {"Ram Babu Buri... :poop:", "Crab... :crab:",
@@ -176,7 +176,7 @@ public class Fish extends ListenerAdapter {
                                 if (num <= 30) {
                                     int fishChoice = (int) (Math.random() * fish.length);
                                     result = fish[fishChoice];
-                                    int updatedAmount = (int) (userBalance + MULTIPLIER * bet);
+                                    long updatedAmount = (long)(userBalance + bet*(MULTIPLIER - 1));
                                     DBSetup.updateBalanceInDatabase(userID, updatedAmount);
 
                                     embed.setTitle("Fish");
@@ -187,7 +187,7 @@ public class Fish extends ListenerAdapter {
                                 } else {
                                     int objectChoice = (int) (Math.random() * objects.length);
                                     result = objects[objectChoice];
-                                    int updatedAmount = userBalance - bet;
+                                    long updatedAmount = userBalance - bet;
                                     DBSetup.updateBalanceInDatabase(userID, updatedAmount);
 
                                     embed.setTitle("Fish");

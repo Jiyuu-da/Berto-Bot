@@ -200,6 +200,7 @@ import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
+import org.example.Main;
 import org.example.listeners.db.BankCreate;
 import org.example.listeners.db.DBSetup;
 
@@ -216,17 +217,22 @@ public class SlotMachine extends ListenerAdapter {
 
     @Override
     public void onSlashCommandInteraction(SlashCommandInteractionEvent event) {
-        final double MULTIPLIER = 2.4;
+        final double MULTIPLIER = 16;
         final int ANIMATION_DURATION = 3000; // Duration of the animation in milliseconds
         final int ANIMATION_INTERVAL = 300; // Interval between color changes
 
         String command = event.getName();
         String userID = event.getUser().getId();
 
+        if(Main.maintenance && !userID.equals("576834455306633216")) {
+            event.reply("BertoBot is under maintenance.").setEphemeral(true).queue();
+            return;
+        }
+
         if (command.equalsIgnoreCase("slot")) {
 
             OptionMapping optionBet = event.getOption("bet");
-            int bet = optionBet.getAsInt();
+            long bet = optionBet.getAsLong();
 
             if(optionBet == null) {
                 event.reply("You must specify a 'bet'").setEphemeral(true).queue();
@@ -236,8 +242,8 @@ public class SlotMachine extends ListenerAdapter {
             try (Connection connection = DriverManager.getConnection(DB_URL)) {
                 if (BankCreate.hasAccount(userID)) {
                     try {
-                        int userBalance = DBSetup.getBalanceFromDatabase(userID);
-                        int difference = bet - userBalance;
+                        long userBalance = DBSetup.getBalanceFromDatabase(userID);
+                        long difference = bet - userBalance;
 
                         if (bet > 0) {
                             if (bet <= userBalance) {
@@ -299,7 +305,7 @@ public class SlotMachine extends ListenerAdapter {
                                     public void run() {
                                         for (int i = 0; i < slots.length; i++) {
                                             for (int j = 0; j < slots[i].length; j++) {
-                                                int randomIdx = random.nextInt(slots.length);
+                                                int randomIdx = random.nextInt(colors.length);
                                                 slots[i][j] = String.format(":%s_square:", colors[randomIdx]);
                                             }
                                         }
@@ -326,12 +332,12 @@ public class SlotMachine extends ListenerAdapter {
                                         embed.addField("Player", user.getAsMention(), true);
                                         embed.addField("Bet", String.valueOf(bet) + " :coin:", true);
 
-                                        int updatedAmount;
+                                        long updatedAmount;
 
                                         if (win) {
-                                            embed.addField("Result", "WON " + (int) (MULTIPLIER * bet) + "!! :coin:", true);
+                                            embed.addField("Result", "WON " + (long) (MULTIPLIER * bet) + "!! :coin:", true);
                                             embed.setColor(constants.WIN_COLOR);
-                                            updatedAmount = (int) (userBalance + MULTIPLIER * bet);
+                                            updatedAmount = (long) (userBalance + bet * (MULTIPLIER - 1));
                                             try {
                                                 DBSetup.updateBalanceInDatabase(userID, updatedAmount);
                                             } catch (SQLException e) {

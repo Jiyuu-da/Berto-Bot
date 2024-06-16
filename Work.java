@@ -120,6 +120,7 @@ package org.example.listeners;
 
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import org.example.Main;
 import org.example.listeners.db.BankCreate;
 import org.example.listeners.db.DBSetup;
 import org.slf4j.Logger;
@@ -143,28 +144,31 @@ public class Work extends ListenerAdapter {
         String command = event.getName();
         String userID = event.getUser().getId();
 
+        if(Main.maintenance && !userID.equals("576834455306633216")) {
+            event.reply("BertoBot is under maintenance.").setEphemeral(true).queue();
+            return;
+        }
 
-        logger.info("Received /work command from user {}", userID);
-
-        final int MAX_AMOUNT = 60;
+        final long MAX_AMOUNT = 60;
 
         if(command.equalsIgnoreCase("work")) {
+            logger.info("Received /work command from user {}", userID);
             try (Connection connection = SqliteTest.getConnection()) {
                 if(BankCreate.hasAccount(userID)) {
                     String[] workOptions = {
-                            "Waiter", "Plumber", "Manager",  "Doctor", "Engineer","Teacher", "Artist", "Writer", "Chef", "Lawyer", "Accountant","Architect", "Step Sister ;)",
+                            "Waiter", "Plumber", "Manager",  "Doctor", "Engineer","Teacher", "Artist", "Writer", "Chef", "Lawyer", "Accountant","Architect", "Bartender",
                             "Police Officer", "Firefighter", "Pilot","Nurse", "Scientist", "Athlete","Musician", "Photographer", "Actor", "Farmer","Electrician", "Director"
                     };
 
                     int rd = (int)(Math.random()*workOptions.length);
-                    int amount = (int)(Math.random()*MAX_AMOUNT - 10) + 10;
+                    long amount = (long)(Math.random()*MAX_AMOUNT - 10) + 10;
                     String work = workOptions[rd];
 
                     if(canClaimWork(userID, connection)) {
                         updateLastWorkTimestamp(userID, connection);
                         logger.info("User {} claimed daily reward.", userID);
-                        int userBalance = DBSetup.getBalanceFromDatabase(userID);
-                        int updatedBalance = userBalance + amount;
+                        long userBalance = DBSetup.getBalanceFromDatabase(userID);
+                        long updatedBalance = userBalance + amount;
                         DBSetup.updateBalanceInDatabase(userID, updatedBalance);
 
                         if("aeiouAEIOU".contains(work.substring(0,1).toLowerCase())) {

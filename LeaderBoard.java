@@ -28,31 +28,32 @@ public class LeaderBoard extends ListenerAdapter {
                 EmbedBuilder embed = new EmbedBuilder();
                 StringBuilder descriptionBuilder = new StringBuilder();
 
-                int maxBalanceLength = 0;
-                int maxIdLength = 0;
+                long maxBalanceLength = 0;
+                long maxIdLength = 0;
+
                 for (Economy i : users) {
-                    String balance = String.valueOf((int) i.getUser_bal());
+                    String balance = String.valueOf((long) i.getUser_bal());
                     String id = String.valueOf(i.getUser_id());
                     maxBalanceLength = Math.max(maxBalanceLength, balance.length());
                     maxIdLength = Math.max(maxIdLength, id.length());
                 }
 
-                int pos = 1;
+                long pos = 1;
                 for (Economy i : users) {
-                    String balance = String.valueOf((int) i.getUser_bal());
+                    String balance = String.valueOf((long) i.getUser_bal());
                     String id = String.valueOf(i.getUser_id());
 
                     balance = String.format("%" + maxBalanceLength + "s", balance);
                     String emote;
 
                     if (pos == 1) {
-                        emote = ":first_place:";
+                        emote = " :first_place:";
                     } else if (pos == 2) {
-                        emote = ":second_place:";
+                        emote = " :second_place:";
                     } else if (pos == 3) {
-                        emote = ":third_place:";
+                        emote = " :third_place:";
                     } else {
-                        emote = ":coin:";
+                        emote = " :coin:";
                     }
 
                     descriptionBuilder.append(pos).append(". **`").append(balance).append("`** ")
